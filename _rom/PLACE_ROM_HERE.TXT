@@ -1,0 +1,3 @@
+exe3-jp-v10.gba
+
+CRC32: 1C57724E
