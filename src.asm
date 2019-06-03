@@ -87,6 +87,21 @@ ExtraFunctions:
 
 	ldr	r0,=0x4000130
 	ldrh	r0,[r0]
+	ldr	r1,=0x30C
+	tst	r0,r1
+	bne	@@drawHud
+
+	// Disable interrupts
+	mov	r0,0x0
+	ldr	r1,=0x4000208
+	str	r0,[r1]
+	// Set return address to ROM
+	ldr	r1,=0x3007FFA
+	str	r0,[r1]
+	// Perform soft reset
+	swi	0x0	// SoftReset
+
+@@drawHud:
 	// Check Select held
 	lsr	r0,r0,0x3
 	bcc	@@end
