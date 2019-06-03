@@ -85,6 +85,12 @@ UpdateRngIndex:
 ExtraFunctions:
 	push	r14
 
+	ldr	r0,=0x4000130
+	ldrh	r0,[r0]
+	// Check Select held
+	lsr	r0,r0,0x3
+	bcc	@@end
+
 	ldr	r0,=HudStrings
 	bl	DrawHudStrings
 
