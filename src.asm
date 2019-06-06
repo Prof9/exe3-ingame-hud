@@ -86,10 +86,10 @@ ExtraFunctions:
 	push	r14
 
 	ldr	r0,=0x4000130
-	ldrh	r0,[r0]
-	ldr	r1,=0x30C
-	tst	r0,r1
-	bne	@@drawHud
+	ldrh	r1,[r0]
+	ldr	r2,=0x30C
+	tst	r1,r2
+	bne	@@freeze
 
 	// Disable interrupts
 	mov	r0,0x0
@@ -101,9 +101,26 @@ ExtraFunctions:
 	// Perform soft reset
 	swi	0x0	// SoftReset
 
+@@freeze:
+	ldr	r2,=0x204
+@@freezeLoop:
+	ldrh	r1,[r0]
+	tst	r1,r2
+	beq	@@freezeLoop
+
+@@lag:
+	ldr	r2,=0x104
+	tst	r1,r2
+	bne	@@drawHud
+
+	ldr	r0,=0x10000
+@@lagLoop:
+	sub	r0,0x1
+	bne	@@lagLoop
+
 @@drawHud:
 	// Check Select held
-	lsr	r0,r0,0x3
+	lsr	r1,r1,0x3
 	bcc	@@end
 
 	ldr	r0,=HudStrings
