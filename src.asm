@@ -1,47 +1,69 @@
-.definelabel	FREE_SPACE,0x87FF814
+.if readascii(ROM_IN, 0xAC, 4) == "A6BJ" && readu8(ROM_IN, 0xBC) == 0
+	.notice "Input ROM: EXE3 JP v1.0"
+
+	.definelabel	FREE_SPACE,	0x87FF814
+	.definelabel	addr_8000324,	0x8000324
+	.definelabel	addr_800164C,	0x800164C
+	.definelabel	addr_81302C7,	0x81302C7
+	.definelabel	addr_867A180,	0x867A180
+
+.elseif readascii(ROM_IN, 0xAC, 4) == "A3XE" && readu8(ROM_IN, 0xBC) == 0
+	.notice "Input ROM: BN3 Blue JP v1.0"
+
+	.definelabel	FREE_SPACE,	0x87FFBC4
+	.definelabel	addr_8000324,	0x8000324
+	.definelabel	addr_800164C,	0x8001684
+	.definelabel	addr_81302C7,	0x812FB57
+	.definelabel	addr_867A180,	0x867935C
+
+.else
+	.error "Unrecognized input ROM"
+
+.endif
+
 
 .gba
 .open ROM_IN,ROM_OUT,0x8000000
 
-.org 0x8000324
+.org addr_8000324
 	dw	ExtraFunctions|1
 
 
-.org 0x800164C
+.org addr_800164C
 	ldr	r0,=ResetRngIndex|1b
 	bx	r0
 	.pool
 
-.org 0x8001658
+.org addr_800164C+0xC
 	ldr	r0,=UpdateRngIndex|1
 	mov	r14,r15
 	bx	r0
-	b	0x8001666
+	b	.+0x8
 	.pool
 
-.org 0x800166E
+.org addr_800164C+0x22
 	ldr	r0,=UpdateRngIndex|1
 	mov	r14,r15
 	bx	r0
-	b	0x800167C
+	b	.+0x8
 	.pool
 
-.org 0x8001688
+.org addr_800164C+0x3C
 	ldr	r0,=UpdateRngIndex|1
 	mov	r14,r15
 	bx	r0
-	b	0x8001696
+	b	.+0x8
 	.pool
 
-.org 0x800169E
+.org addr_800164C+0x52
 	ldr	r0,=UpdateRngIndex|1
 	mov	r14,r15
 	bx	r0
-	b	0x80016AC
+	b	.+0x8
 	.pool
 
 
-.org 0x867A180
+.org addr_867A180
 .area 0x800
 	.import	"_temp\font.img.bin"
 .endarea
@@ -70,7 +92,7 @@ UpdateRngIndex:
 
 	// Check return address for choosing gamble win
 	ldr	r2,[sp,0x4]
-	ldr	r3,=0x81302C7
+	ldr	r3,=addr_81302C7
 	cmp	r2,r3
 	bne	@@setFrame
 

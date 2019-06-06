@@ -1,3 +1,5 @@
 exe3-jp-v10.gba
-
 CRC32: 1C57724E
+
+bn3b-us.gba
+CRC32: 086A4570

@@ -16,6 +16,12 @@ tools\armips.exe src.asm ^
 	-sym "_rom\exe3-jp-v10-patched.sym"
 if %errorlevel% neq 0 goto :error
 
+tools\armips.exe src.asm ^
+	-strequ ROM_IN "_rom\bn3b-us.gba" ^
+	-strequ ROM_OUT "_rom\bn3b-us-patched.gba" ^
+	-sym "_rom\bn3b-us-patched.sym"
+if %errorlevel% neq 0 goto :error
+
 echo.
 echo ROM built successfully
 exit /b 0
