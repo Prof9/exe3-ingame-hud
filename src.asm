@@ -682,7 +682,7 @@ HudStringsGamble:
 	.ascii	"RNG:"
 	.db	Cmd_PrintMemHex32	:: .dw	0x200980C
 	.db	Cmd_NewLine
-	.ascii	"Frame:"
+	.ascii	"Idx:"
 	.db	Cmd_PrintMemDec32	:: .dw	0x2009808
 	.db	Cmd_NewLine
 	.ascii	"Win:"
