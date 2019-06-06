@@ -63,12 +63,24 @@ ResetRngIndex:
 
 .align 2
 UpdateRngIndex:
-	ldr	r0,[r7,0x4]
-	add	r0,0x1
-	str	r0,[r7,0x4]
+	ldr	r0,[r7]
+
+	ldr	r1,[r7,0x4]
+	add	r1,0x1
+
+	// Check return address for choosing gamble win
+	ldr	r2,[sp,0x4]
+	ldr	r3,=0x81302C7
+	cmp	r2,r3
+	bne	@@setFrame
+
+	str	r1,[r7,0x8]
+	str	r0,[r7,0xC]
+
+@@setFrame:
+	str	r1,[r7,0x4]
 
 	// Normal RNG function
-	ldr	r0,[r7]
 	ldr	r1,=0x873CA9E5
 	lsl	r2,r0,0x1
 	lsr	r3,r0,0x1F
@@ -124,6 +136,15 @@ ExtraFunctions:
 	bcc	@@end
 
 	ldr	r0,=HudStrings
+	bl	DrawHudStrings
+
+	// Check if gambling active
+	ldr	r0,=0x2000030
+	ldrb	r0,[r0,0x5]
+	cmp	r0,0x80
+	blt	@@end
+
+	ldr	r0,=HudStringsGamble
 	bl	DrawHudStrings
 
 @@end:
@@ -572,6 +593,12 @@ StyleElemNames:
 	.ascii	"Aqua",0x00
 	.ascii	"Wood",0x00
 
+GambleWinNames:
+	.ascii	"BotLeft",0x00
+	.ascii	"TopLeft",0x00
+	.ascii	"TopRght",0x00
+	.ascii	"BotRght",0x00
+
 
 .align 2
 PrintNextEncounterStep:
@@ -625,10 +652,22 @@ HudStrings:
 	.db	Cmd_Func		:: .dw	PrintNextEncounterStep|1
 	.db	0
 
-// To add:
-// gambleWin = 0x02009DB2
-// folderSlot = 0x02034040
+	.db	-1	// Terminator
+
+
+HudStringsGamble:
+	.db	18, 9	// X, Y
+	.ascii	"RNG:"
+	.db	Cmd_PrintMemHex32	:: .dw	0x200980C
+	.db	Cmd_NewLine
+	.ascii	"Frame:"
+	.db	Cmd_PrintMemDec32	:: .dw	0x2009808
+	.db	Cmd_NewLine
+	.ascii	"Win:"
+	.db	Cmd_PrintEnum8		:: .dw	GambleWinNames	:: .dw	0x2009DB2	:: .db	3
+	.db	0
 
 	.db	-1	// Terminator
+
 
 .close
